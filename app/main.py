@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 app = FastAPI(title="TFU UT2 API")
 
-#Datos para la abse de datos: 
+#Datos para la base de datos: 
 products = [
     {
         "id": 1,
