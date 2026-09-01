@@ -1,5 +1,31 @@
 services:
-  api:
+
+  service_a:
     build: .
     ports:
-      - 8000:8000
+      - "8000:8000"
+
+    environment:
+      SERVICE_B_URL: "http://service_b1:8001"
+      SERVICE_B_REPLICA_URL: "http://service_b2:8002"
+
+    depends_on:
+      - service_b1
+      - service_b2
+
+    volumes:
+      - ./service_a/logs:/app/service_a/logs
+
+
+  service_b1:
+    build: .
+    command: uvicorn service_b.main:app --host 0.0.0.0 --port 8001
+    ports:
+      - "8001:8001"
+
+
+  service_b2:
+    build: .
+    command: uvicorn service_b.main:app --host 0.0.0.0 --port 8002
+    ports:
+      - "8002:8002"
