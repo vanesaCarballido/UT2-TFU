@@ -106,7 +106,7 @@ Las credenciales incorrectas son rechazadas.
 
 ### 2. Límite de acceso
 
-El límite de acceso es de **4 solicitudes por minuto** para los endpoints protegidos. Al superar el límite, las solicitudes posteriores son rechazadas temporalmente.
+El límite de acceso es de **3 solicitudes por minuto** para los endpoints protegidos. Al superar el límite, las solicitudes posteriores son rechazadas temporalmente.
 
 ### 3. Re-intentos y replicación
 
