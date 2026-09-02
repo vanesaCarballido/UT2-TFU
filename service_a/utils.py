@@ -38,7 +38,7 @@ def retry_request(url, retries=3):
             )
 
             if attempt < retries - 1:
-                time.sleep(0.3)
+                time.sleep(0.8)
 
     raise Exception(f"All retries failed for {url}")
 
