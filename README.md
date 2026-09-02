@@ -3,11 +3,15 @@
 ## Ejecución local
 
 ### Crear el entorno virtual
+**En Windows:**
 
 ```bash
 python -m venv venv
 ```
-
+**En macOS:**
+```bash
+python3 -m venv venv
+```
 ### Activar el entorno virtual
 
 **En Windows (PowerShell):**
