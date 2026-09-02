@@ -1,0 +1,156 @@
+# EJECUCIÓN LOCAL
+
+# Crear entorno virtual
+
+## Windows
+python -m venv venv
+venv\Scripts\Activate.ps1
+
+## macOS
+python3 -m venv venv
+source venv/bin/activate
+
+# Instalar requerimientos
+
+## Windows
+pip install -r requirements.txt
+
+## macOS
+pip3 install -r requirements.txt
+
+# Abrir 3 terminales
+
+## Terminal 1 - Service B1
+uvicorn service_b.main:app --port 8001
+
+## Terminal 2 - Service B2
+uvicorn service_b.main:app --port 8002
+
+## Terminal 3 - Service A
+uvicorn service_a.main:app --port 8000
+
+# EJECUCIÓN CON DOCKER
+
+# Ejecutar únicamente esta sección en lugar de la ejecución local
+docker compose up --build 
+
+# Swagger
+
+# Service A:  http://localhost:8000/docs
+
+# Service B1: http://localhost:8001/docs
+
+# Service B2: http://localhost:8002/docs
+
+# PRUEBAS 
+
+# Ejecutar con LOCAL o DOCKER levantado
+
+# Autenticación
+
+## Credenciales correctas
+curl http://localhost:8000/products -H "username: admin" -H "password: 1234"
+
+## Credenciales incorrectas
+curl http://localhost:8000/products -H "username: admin" -H "password: incorrecta"
+
+# Límite de acceso
+
+## 3 requests por minuto: la cuarta debe ser rechazada
+curl http://localhost:8000/products -H "username: admin" -H "password: 1234"
+curl http://localhost:8000/products -H "username: admin" -H "password: 1234"
+curl http://localhost:8000/products -H "username: admin" -H "password: 1234"
+curl http://localhost:8000/products -H "username: admin" -H "password: 1234"
+
+# Re-intentos y replicación
+
+## Comprobar B1
+curl http://localhost:8001/saludo
+
+## Comprobar B2
+curl http://localhost:8002/saludo
+
+## Solicitud normal a través de A
+
+curl http://localhost:8000/saludo
+
+# Configurar B1 con 50% de disponibilidad
+
+## Windows PowerShell
+curl.exe -X POST http://localhost:8001/config -H "Content-Type: application/json" -d '{"prob":0.5}'
+
+## macOS
+curl -X POST http://localhost:8001/config -H "Content-Type: application/json" -d '{"prob":0.5}'
+
+# Probar solicitudes a B1
+
+curl http://localhost:8001/saludo
+curl http://localhost:8001/saludo
+curl http://localhost:8001/saludo
+
+# Probar A con re-intentos + réplica
+
+curl http://localhost:8000/saludo
+curl http://localhost:8000/saludo
+curl http://localhost:8000/saludo
+curl http://localhost:8000/saludo
+curl http://localhost:8000/saludo
+
+# Restaurar B1
+
+## Windows PowerShell
+curl.exe -X POST http://localhost:8001/config -H "Content-Type: application/json" -d '{"prob":1.0}'
+
+## macOS
+curl -X POST http://localhost:8001/config -H "Content-Type: application/json" -d '{"prob":1.0}'
+
+curl http://localhost:8000/saludo
+
+# Logs:
+
+# service_a/logs/service_a.log
+
+# PRUEBA DE FALLA COMPLETA DE B1
+
+# Local
+
+## Detener B1 con CTRL + C en su terminal
+
+curl http://localhost:8000/saludo
+
+## Revisar:
+
+# service_a/logs/service_a.log
+
+## Volver a iniciar B1
+
+uvicorn service_b.main:app --port 8001
+
+curl http://localhost:8000/saludo
+
+# Docker
+
+docker compose stop service_b1
+curl http://localhost:8000/saludo
+
+## Revisar:
+
+# service_a/logs/service_a.log
+
+docker compose start service_b1
+curl http://localhost:8000/saludo
+
+# PRUEBAS CON K6
+
+## Ejecutar en nueva terminal
+k6 run k6/script.js
+
+# Se puede probar detener B1 o cambiar su probabilidad de disponibilidad a 0.5 para comprobar ambas tácticas de disponibilidad
+
+# Logs: 
+
+# service_a/logs/service_a.log
+
+# DETENER DOCKER
+
+docker compose down
