@@ -4,7 +4,7 @@ from fastapi import Header, HTTPException
 
 requests = {}
 
-MAX_REQUESTS = 4
+MAX_REQUESTS = 3
 WINDOW = 60
 
 # Táctica: Límite de acceso
