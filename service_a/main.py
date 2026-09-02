@@ -161,7 +161,7 @@ def delete_product(
 def saludo():
 
     # Primero se intenta acceder a B1
-    # realizando hasta 3 reintentos.
+    # realizando hasta 3 intentos.
     try:
 
         return retry_request(
